@@ -35,6 +35,14 @@ int main(int argc, char **argv) {
 	messages[1] = "If your dreams do not scare you, they are not big enough\0";
 	string quit = "quit";
 	string msgget = "msgget";
+	string login = "login";
+	//
+	string loginAcc1 = "root root01";
+	string loginAcc2 = "john john01";
+	string loginAcc3 = "david david01";
+	string loginAcc4 = "mary mary01";
+	
+	//
 	string temp;
 	ifstream ifile;
 	
@@ -106,6 +114,15 @@ int main(int argc, char **argv) {
 				temp += "\n";
 				strcpy(buf, temp.c_str());
 				i++;
+			}
+
+			//Login Method
+			if (strcmp(buf, login.c_str()) == 10)
+			{
+				return "200 OK";
+			}
+			else {
+				return "410 Wrong UserID or Password"
 			}
 		
 			send (new_s, buf, strlen(buf) + 1, 0);

@@ -26,7 +26,7 @@ int main(int argc, char * argv[]) {
 	string quit = "quit";
 	string msgget = "msgget";
 	string login = "login";
-	string 
+	
 	
     int len;
     int s;
@@ -85,7 +85,7 @@ int main(int argc, char * argv[]) {
 			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
 		}
-		if (strcmp(buf, login_str()) == 10)
+		if (strcmp(buf, login.c_str()) == 10)
 		{
 			send(s, buf, len, 0);
 			recv(s, rbuf, sizeof(rbuf), 0);
