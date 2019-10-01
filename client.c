@@ -12,6 +12,7 @@
 #include <netdb.h>
 #include <cstdlib>
 #include <cstring>
+#include <string.h>
 
 using namespace std;
 
@@ -22,11 +23,15 @@ int main(int argc, char * argv[]) {
 
     struct sockaddr_in sin;
     char buf[MAX_LINE];
+	char fbuf[MAX_LINE];
     char rbuf[MAX_LINE];
 	string quit = "quit";
 	string msgget = "msgget";
+	string loginAcc1 = "login root root01";
+	string loginAcc2 = "login john john01";
+	string loginAcc3 = "login david david01";
+	string loginAcc4 = "login mary mary01";
 	string login = "login";
-	
 	
     int len;
     int s;
@@ -71,25 +76,33 @@ int main(int argc, char * argv[]) {
 		
 		buf[MAX_LINE -1] = '\0';
 		len = strlen(buf) + 1;
-		if(strcmp(buf, quit.c_str()) == 10)
-		{
-			send (s, buf, len, 0);
-			recv (s, rbuf, sizeof(rbuf), 0);
-			cout << rbuf << endl;
-			close(s);
-			break;
-		}
+		
+
+		//cout << "Here:" << buf << endl;
+		
 		if(strcmp(buf, msgget.c_str()) == 10)
 		{
 			send (s, buf, len, 0);
 			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
+			continue;
 		}
-		if (strcmp(buf, login.c_str()) == 10)
+		if(strcmp(buf, quit.c_str()) == 10)
 		{
-			send(s, buf, len, 0);
+			send (s, buf, len, 0);
+			recv (s, rbuf, sizeof(rbuf), 0);
+			cout << rbuf << "here" << endl;
+			close(s);
+			break;
+		}
+		strcpy(fbuf, buf);
+		strncpy(buf,login.c_str(),6);
+		buf[MAX_LINE -1] = '\0';
+		if (strcmp(buf, login.c_str()) == 0)
+		{
+			send(s, fbuf, len, 0);
 			recv(s, rbuf, sizeof(rbuf), 0);
-			exit (EXIT_FAILURE);
+			cout << rbuf << endl;
 		}
 		
     }

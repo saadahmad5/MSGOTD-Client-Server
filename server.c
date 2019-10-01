@@ -35,12 +35,13 @@ int main(int argc, char **argv) {
 	messages[1] = "If your dreams do not scare you, they are not big enough\0";
 	string quit = "quit";
 	string msgget = "msgget";
+	bool islogin = false;
 	string login = "login";
 	//
-	string loginAcc1 = "root root01";
-	string loginAcc2 = "john john01";
-	string loginAcc3 = "david david01";
-	string loginAcc4 = "mary mary01";
+	string loginAcc1 = "login root root01";
+	string loginAcc2 = "login john john01";
+	string loginAcc3 = "login david david01";
+	string loginAcc4 = "login mary mary01";
 	
 	//
 	string temp;
@@ -104,8 +105,10 @@ int main(int argc, char **argv) {
 			
 			if(strcmp(buf, quit.c_str()) == 10)
 			{
-				temp = "Reply 4m server: 200 OK\n";
+				temp = "Reply 4m server: 200 OK-Quit\n";
 				strcpy(buf, temp.c_str());
+				send (new_s, buf, strlen(buf) + 1, 0);
+				break;
 			}
 			if(strcmp(buf, msgget.c_str()) == 10)
 			{
@@ -115,14 +118,21 @@ int main(int argc, char **argv) {
 				strcpy(buf, temp.c_str());
 				i++;
 			}
-
+			//cout << "*" << strcmp(buf, login.c_str()) << endl;
 			//Login Method
-			if (strcmp(buf, login.c_str()) == 10)
+			if (strcmp(buf, loginAcc1.c_str()) == 10 ||
+				strcmp(buf, loginAcc2.c_str()) == 10 ||
+				strcmp(buf, loginAcc3.c_str()) == 10 ||
+				strcmp(buf, loginAcc4.c_str()) == 10 )
 			{
-				return "200 OK";
+				temp = "Reply 4m server: 200 OK\n";
+				islogin = true;
+				strcpy(buf, temp.c_str());
 			}
-			else {
-				return "410 Wrong UserID or Password"
+			else if(strcmp(buf, login.c_str()) == 32)
+			{
+				temp = "Reply 4m server: 410 Wrong UserID or Password\n";
+				strcpy(buf, temp.c_str());
 			}
 		
 			send (new_s, buf, strlen(buf) + 1, 0);
