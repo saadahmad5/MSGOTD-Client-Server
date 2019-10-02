@@ -19,6 +19,16 @@ using namespace std;
 #define SERVER_PORT 3399
 #define MAX_LINE 256
 
+void substring(char s[], char sub[], int p, int l) {
+   int c = 0;
+   
+   while (c < l) {
+      sub[c] = s[p+c-1];
+      c++;
+   }
+   sub[c] = '\0';
+}
+
 int main(int argc, char * argv[]) {
 
     struct sockaddr_in sin;
@@ -32,6 +42,7 @@ int main(int argc, char * argv[]) {
 	string loginAcc3 = "login david david01";
 	string loginAcc4 = "login mary mary01";
 	string login = "login";
+	string logout = "logout";
 	
     int len;
     int s;
@@ -91,19 +102,32 @@ int main(int argc, char * argv[]) {
 		{
 			send (s, buf, len, 0);
 			recv (s, rbuf, sizeof(rbuf), 0);
-			cout << rbuf << "here" << endl;
+			cout << rbuf << endl;
 			close(s);
 			break;
 		}
-		strcpy(fbuf, buf);
-		strncpy(buf,login.c_str(),6);
-		buf[MAX_LINE -1] = '\0';
-		if (strcmp(buf, login.c_str()) == 0)
+		if(strcmp(buf, logout.c_str()) == 10)
 		{
-			send(s, fbuf, len, 0);
-			recv(s, rbuf, sizeof(rbuf), 0);
+			send (s, buf, len, 0);
+			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
 		}
+		strcpy(fbuf, buf);
+		substring(fbuf, buf, 1, 5);
+		
+		if(strcmp(fbuf,login.c_str()) == 32)
+		{
+			strncpy(buf,fbuf,6);
+			
+			if (strcmp(buf, login.c_str()) == 32)
+			{
+				
+				send(s, fbuf, len, 0);
+				recv(s, rbuf, sizeof(rbuf), 0);
+				cout << rbuf << endl;
+			}	
+		}
+		
 		
     }
 
