@@ -43,6 +43,7 @@ int main(int argc, char * argv[]) {
 	string loginAcc4 = "login mary mary01";
 	string login = "login";
 	string logout = "logout";
+	string shutdown = "shutdown";
 	
     int len;
     int s;
@@ -126,6 +127,14 @@ int main(int argc, char * argv[]) {
 				recv(s, rbuf, sizeof(rbuf), 0);
 				cout << rbuf << endl;
 			}	
+		}
+		if (strcmp(buf, shutdown.c_str()) == 10)
+		{
+			send(s, buf, len, 0);
+			recv(s, rbuf, sizeof(rbuf), 0);
+			cout << rbuf << endl;
+			close(s);
+			break;
 		}
 		
 		

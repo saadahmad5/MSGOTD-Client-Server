@@ -46,6 +46,9 @@ int main(int argc, char **argv) {
 	string loginAcc4 = "login mary mary01";
 	
 	//
+	string shutdown = "shutdown";
+	bool isShutdown = false;
+	bool isShutdown1 = false;
 	string temp;
 	ifstream ifile;
 	
@@ -133,6 +136,18 @@ int main(int argc, char **argv) {
 				}
 				strcpy(buf, temp.c_str());
 				i++;
+			}
+			//Shutdown
+			if (strcmp(buf, shutdown.c_str()) == 10)
+			{
+				temp = "200 OK\n";
+				strcpy(buf, temp.c_str());
+				send(new_s, buf, strlen(buf) + 1, 0);
+				break;
+			}
+			else {
+				temp = "300 message format error\n";
+				strcpy(buf, temp.c_str());
 			}
 			
 			//cout << "*" << strcmp(buf, login.c_str()) << endl;
