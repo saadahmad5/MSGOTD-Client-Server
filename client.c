@@ -97,7 +97,7 @@ int main(int argc, char * argv[]) {
 			send (s, buf, len, 0);
 			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
-			continue;
+			//continue;
 		}
 		if(strcmp(buf, quit.c_str()) == 10)
 		{
@@ -106,6 +106,17 @@ int main(int argc, char * argv[]) {
 			cout << rbuf << endl;
 			close(s);
 			break;
+		}
+		if(strcmp(buf, shutdown.c_str()) == 10)
+		{
+			send (s, buf, len, 0);
+			recv (s, rbuf, sizeof(rbuf), 0);
+			cout << rbuf << endl;
+			string temp = "Reply 4m server: 200 OK\n";
+			if(strcmp(rbuf, temp.c_str()) == 0)
+			{
+				break;
+			}
 		}
 		if(strcmp(buf, logout.c_str()) == 10)
 		{
@@ -127,14 +138,6 @@ int main(int argc, char * argv[]) {
 				recv(s, rbuf, sizeof(rbuf), 0);
 				cout << rbuf << endl;
 			}	
-		}
-		if (strcmp(buf, shutdown.c_str()) == 10)
-		{
-			send(s, buf, len, 0);
-			recv(s, rbuf, sizeof(rbuf), 0);
-			cout << rbuf << endl;
-			close(s);
-			break;
 		}
 		
 		

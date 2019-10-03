@@ -39,6 +39,8 @@ int main(int argc, char **argv) {
 	bool isRlogin = false;
 	string login = "login";
 	string logout = "logout";
+	string stdown = "shutdown";
+	bool shutdown = false;
 	//
 	string loginAcc1 = "login root root01";
 	string loginAcc2 = "login john john01";
@@ -46,9 +48,6 @@ int main(int argc, char **argv) {
 	string loginAcc4 = "login mary mary01";
 	
 	//
-	string shutdown = "shutdown";
-	bool isShutdown = false;
-	bool isShutdown1 = false;
 	string temp;
 	ifstream ifile;
 	
@@ -98,15 +97,32 @@ int main(int argc, char **argv) {
     cout << "The server is up, waiting for connection" << endl;
 
     /* wait for connection, then receive and print text */
-    while (1) {
+    while (!shutdown) {
 		if ((new_s = accept(s, (struct sockaddr *)&sin, &addrlen)) < 0) {
 			perror("accept");
 			exit(1);
 		}
 		cout << "new connection from " << inet_ntoa(sin.sin_addr) << endl;
 	
-		while (len = recv(new_s, buf, sizeof(buf), 0)) {
+		while (len = recv(new_s, buf, sizeof(buf), 0) && !shutdown) {
 			cout << buf;
+			
+			if(strcmp(buf, stdown.c_str()) == 10)
+			{	
+				if(isRlogin)
+				{
+					shutdown = true;
+					temp = "Reply 4m server: 200 OK\n";
+					strcpy(buf, temp.c_str());
+					send (new_s, buf, strlen(buf) + 1, 0);
+					break;
+				}
+				else
+				{
+					temp = "Reply 4m server: 402 User not allowed\n";
+					strcpy(buf, temp.c_str());
+				}
+			}
 			
 			if(strcmp(buf, quit.c_str()) == 10)
 			{
@@ -136,18 +152,6 @@ int main(int argc, char **argv) {
 				}
 				strcpy(buf, temp.c_str());
 				i++;
-			}
-			//Shutdown
-			if (strcmp(buf, shutdown.c_str()) == 10)
-			{
-				temp = "200 OK\n";
-				strcpy(buf, temp.c_str());
-				send(new_s, buf, strlen(buf) + 1, 0);
-				break;
-			}
-			else {
-				temp = "300 message format error\n";
-				strcpy(buf, temp.c_str());
 			}
 			
 			//cout << "*" << strcmp(buf, login.c_str()) << endl;
