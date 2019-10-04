@@ -1,5 +1,9 @@
 /*
  * client.c
+ * Saad Ahmad & Shahriyar Chowdhry
+ * Created: Sep 25 2019
+ * Updated: Oct 04 2019
+ * CIS 427
  */
 
 #include <stdio.h>
@@ -19,32 +23,20 @@ using namespace std;
 #define SERVER_PORT 3399
 #define MAX_LINE 256
 
-void substring(char s[], char sub[], int p, int l) {
-   int c = 0;
-   
-   while (c < l) {
-      sub[c] = s[p+c-1];
-      c++;
-   }
-   sub[c] = '\0';
-}
-
 int main(int argc, char * argv[]) {
 
+
+	// Variables
     struct sockaddr_in sin;
     char buf[MAX_LINE];
 	char fbuf[MAX_LINE];
     char rbuf[MAX_LINE];
 	string quit = "quit";
 	string msgget = "msgget";
-	string loginAcc1 = "login root root01";
-	string loginAcc2 = "login john john01";
-	string loginAcc3 = "login david david01";
-	string loginAcc4 = "login mary mary01";
 	string login = "login";
 	string logout = "logout";
 	string shutdown = "shutdown";
-	
+	string msgstore = "msgstore";
     int len;
     int s;
 
@@ -74,13 +66,13 @@ int main(int argc, char * argv[]) {
 	cout << "Welcome to YAMOTD Project-1 CIS 427 Client Side" << endl;
 	
 
-	
-	/* main loop; get and send lines of text */
     while (true) 
 	{
-		cout << "Enter a command: ";
+		// User interaction at client side
+ 		cout << "Enter a command: ";
 		fgets(buf, sizeof(buf), stdin);
 		
+		// Lowercases all input to unify commands
 		for (int i = 0; i < MAX_LINE; i++)
 		{
 		   buf[i] = tolower(buf[i]);
@@ -89,16 +81,17 @@ int main(int argc, char * argv[]) {
 		buf[MAX_LINE -1] = '\0';
 		len = strlen(buf) + 1;
 		
-
-		//cout << "Here:" << buf << endl;
+		// MSGGET
 		
 		if(strcmp(buf, msgget.c_str()) == 10)
 		{
 			send (s, buf, len, 0);
 			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
-			//continue;
 		}
+		
+		// QUIT
+		
 		if(strcmp(buf, quit.c_str()) == 10)
 		{
 			send (s, buf, len, 0);
@@ -107,26 +100,34 @@ int main(int argc, char * argv[]) {
 			close(s);
 			break;
 		}
+		
+		// SHUTDOWN
+		
 		if(strcmp(buf, shutdown.c_str()) == 10)
 		{
 			send (s, buf, len, 0);
 			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
+			// If server replies this, the client will close too
 			string temp = "Reply 4m server: 200 OK\n";
 			if(strcmp(rbuf, temp.c_str()) == 0)
 			{
 				break;
 			}
 		}
+		
+		// LOGOUT
+		
 		if(strcmp(buf, logout.c_str()) == 10)
 		{
 			send (s, buf, len, 0);
 			recv (s, rbuf, sizeof(rbuf), 0);
 			cout << rbuf << endl;
 		}
-		strcpy(fbuf, buf);
-		substring(fbuf, buf, 1, 5);
 		
+		// LOGIN user pass
+		
+		strcpy(fbuf, buf);
 		if(strcmp(fbuf,login.c_str()) == 32)
 		{
 			strncpy(buf,fbuf,6);
@@ -140,6 +141,20 @@ int main(int argc, char * argv[]) {
 			}	
 		}
 		
+		// MSGSTORE message
+		
+		strcpy(fbuf, buf);
+		if(strcmp(fbuf,msgstore.c_str()) == 32)
+		{
+			strncpy(buf,fbuf,9);
+			
+			if (strcmp(buf, msgstore.c_str()) == 32)
+			{
+				send (s, buf, len, 0);
+				recv (s, rbuf, sizeof(rbuf), 0);
+				cout << rbuf << endl;
+			}
+		}
 		
     }
 

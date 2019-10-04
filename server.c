@@ -1,5 +1,9 @@
 /*
  * server.c
+ * Saad Ahmad & Shahriyar Chowdhry
+ * Created: Sep 25 2019
+ * Updated: Oct 04 2019
+ * CIS 427
  */
 
 #include <stdio.h>
@@ -20,19 +24,32 @@ using namespace std;
 #define MAX_PENDING 5
 #define MAX_LINE 256
 
+// Substring method to return substring from a string
+
+void substring(char s[], char sub[], int p, int l) {
+   int c = 0;
+   
+   while (c < l) {
+      sub[c] = s[p+c-1];
+      c++;
+   }
+   sub[c] = '\0';
+}
+
 int main(int argc, char **argv) {
+
+	// Variables
 
     struct sockaddr_in sin;
     socklen_t addrlen;
     char buf[MAX_LINE];
+	char tempb[MAX_LINE];
     int len;
     int s;
     int new_s;
 	int i = 0;
-	int itotal = 2;
+	int itotal = 0;
 	string messages[20];
-	messages[0] = "Anyone who has never made a mistake has never tried anything new\0";
-	messages[1] = "If your dreams do not scare you, they are not big enough\0";
 	string quit = "quit";
 	string msgget = "msgget";
 	bool islogin = false;
@@ -40,19 +57,20 @@ int main(int argc, char **argv) {
 	string login = "login";
 	string logout = "logout";
 	string stdown = "shutdown";
+	string msgstore = "msgstore";
 	bool shutdown = false;
-	//
+	// Credentials
 	string loginAcc1 = "login root root01";
 	string loginAcc2 = "login john john01";
 	string loginAcc3 = "login david david01";
 	string loginAcc4 = "login mary mary01";
-	
-	//
 	string temp;
 	ifstream ifile;
+	ofstream ofile;
 	
+	// File read and store messages from
 	ifile.open("messages.txt");
-	int j = 2;
+	int j = 0;
 	if(ifile.is_open())
 	{
 		getline(ifile, messages[j]);
@@ -60,15 +78,20 @@ int main(int argc, char **argv) {
 		messages[j] += '\0';
 		while(ifile)
 		{	
-			//cout << j << " " << messages[j] << endl;
 			++j;
 			++itotal;
 			getline(ifile, messages[j]);
 			messages[j] += '\n';
 			messages[j] += '\0';
 		}
-		//cout << itotal;
 	}
+	ifile.close();
+	
+	// File write and store messages to
+	
+	ofile.open("messages.txt", ios::out | ios::app);
+	
+	
     /* build address data structure */
     bzero((char *)&sin, sizeof(sin));
     sin.sin_family = AF_INET;
@@ -107,6 +130,7 @@ int main(int argc, char **argv) {
 		while (len = recv(new_s, buf, sizeof(buf), 0) && !shutdown) {
 			cout << buf;
 			
+			
 			if(strcmp(buf, stdown.c_str()) == 10)
 			{	
 				if(isRlogin)
@@ -134,10 +158,12 @@ int main(int argc, char **argv) {
 			if(strcmp(buf, msgget.c_str()) == 10)
 			{
 				temp = "Reply 4m server: 200 OK\n\t\t ";
-				temp += messages[i%itotal];
+				temp += messages[i];
 				temp += "\n";
 				strcpy(buf, temp.c_str());
 				i++;
+				if(i == itotal)
+					i = 0;
 			}
 			if(strcmp(buf, logout.c_str()) == 10)
 			{
@@ -176,9 +202,38 @@ int main(int argc, char **argv) {
 				strcpy(buf, temp.c_str());
 			}
 		
+			if(strcmp(buf, msgstore.c_str()) == 32)
+			{
+				substring(buf,tempb,10,strlen(buf)-10);
+				if(islogin || isRlogin)
+				{
+					if(itotal < 20) 
+					{
+						temp = tempb;
+						messages[itotal] = temp;
+						++itotal;
+						temp = '\n';
+						temp += tempb;
+						ofile.write(temp.c_str(),strlen(tempb)+1);
+						temp = "Reply 4m server: 200 OK\n";
+						strcpy(buf, temp.c_str());
+					}
+					else
+					{
+						temp = "Reply 4m server: 402 No more space max limit exceed\n";
+						strcpy(buf, temp.c_str());
+					}
+				}
+				else
+				{
+					temp = "Reply 4m server: 401 You are not currently logged in, login first\n";
+					strcpy(buf, temp.c_str());
+				}
+			}
+		
 			send (new_s, buf, strlen(buf) + 1, 0);
 		}
-
+		ofile.close();
 		close(new_s);
     }
 	
