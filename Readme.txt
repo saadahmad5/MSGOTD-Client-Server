@@ -45,7 +45,7 @@ message of the day. The server has access to file messages.txt and
 returns each message in that file in chronological order.
 Ex) Enter a command: msgget
 	Reply 4m server: 200 OK
-					 Message of the day
+			 Message of the day
 
 2. shutdown
 It will allow the user at client side to shutdown the server.
