@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 	string stdown = "shutdown";
 	string msgstore = "msgstore";
 	bool shutdown = false;
-	// Credentials
+	// Credentials for the Login Command
 	string loginAcc1 = "login root root01";
 	string loginAcc2 = "login john john01";
 	string loginAcc3 = "login david david01";
@@ -130,7 +130,8 @@ int main(int argc, char **argv) {
 		while (len = recv(new_s, buf, sizeof(buf), 0) && !shutdown) {
 			cout << buf;
 			
-			
+			//Shutdown Command
+			//Description: It allows the user to shutdown the user
 			if(strcmp(buf, stdown.c_str()) == 10)
 			{	
 				if(isRlogin)
@@ -147,7 +148,8 @@ int main(int argc, char **argv) {
 					strcpy(buf, temp.c_str());
 				}
 			}
-			
+			//Quit Command
+			//Description: It allows the user to exit out of the server
 			if(strcmp(buf, quit.c_str()) == 10)
 			{
 				temp = "Reply 4m server: 200 OK\n";
@@ -155,6 +157,7 @@ int main(int argc, char **argv) {
 				send (new_s, buf, strlen(buf) + 1, 0);
 				break;
 			}
+			//MSGGET Command
 			if(strcmp(buf, msgget.c_str()) == 10)
 			{
 				temp = "Reply 4m server: 200 OK\n\t\t ";
@@ -165,6 +168,8 @@ int main(int argc, char **argv) {
 				if(i == itotal)
 					i = 0;
 			}
+			//Logout Method
+			//It will allow the user to logout.
 			if(strcmp(buf, logout.c_str()) == 10)
 			{
 				temp = "Reply 4m server: No users logged in\n";
@@ -182,6 +187,7 @@ int main(int argc, char **argv) {
 			
 			//cout << "*" << strcmp(buf, login.c_str()) << endl;
 			//Login Method
+			//Allow the user to login
 			if (strcmp(buf, loginAcc2.c_str()) == 10 ||
 				strcmp(buf, loginAcc3.c_str()) == 10 ||
 				strcmp(buf, loginAcc4.c_str()) == 10 )
@@ -201,6 +207,8 @@ int main(int argc, char **argv) {
 				temp = "Reply 4m server: 410 Wrong UserID or Password\n";
 				strcpy(buf, temp.c_str());
 			}
+			//MSGStore
+			//Once the user is logged in, it will allow them to send one message to the server
 		
 			if(strcmp(buf, msgstore.c_str()) == 32)
 			{
